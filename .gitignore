@@ -1,3 +1,6 @@
+# Dependencies
+node_modules/
+
 # Specific paths
 note-app-base/node_modules
 
