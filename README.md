@@ -38,14 +38,14 @@ Built-in models can run with GPU or CPU.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/saitanay/gdg-ahmd-smart-notes
-cd gdg-ahmd-smart-notes
+git clone https://github.com/saitanay/gdg-ahmd
+cd gdg-ahmd
 ```
 
 ### 2. Open the Base App
 
 ```bash
-cd note-app-base
+cd handout/note-app-base
 ```
 
 ### 3. Install Dependencies
@@ -475,6 +475,10 @@ All features run entirely in your browser using Chrome's on-device AI capabiliti
 - Add more AI actions (e.g., "Make it formal", "Make it casual")
 - Customize the Rewriter options for different writing styles
 - Add language selection for multilingual features
+
+## Extended Version
+
+An extended version of this app (`note-app-ai-extended`) is available that includes an additional AI feature: **Generate Tags** - automatically generates relevant tags/keywords from note content using the LanguageModel API with structured output. This demonstrates how to extend the app with additional AI capabilities following the same patterns established in this tutorial.
 
 ---
 
