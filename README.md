@@ -8,6 +8,7 @@ This workshop will guide you through adding AI-powered features to a note-taking
 - Chrome browser (version 131+ recommended)
 - Node.js and npm installed
 - A code editor
+- Experimental flags enabled on your browser + good hardware on laptop (Check [https://browser-check.x2u.in/](https://browser-check.x2u.in/) to verify your browser is ready)
 
 ## Setup Instructions
 
