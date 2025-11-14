@@ -45,7 +45,7 @@ cd gdg-ahmd
 ### 2. Open the Base App
 
 ```bash
-cd handout/note-app-base
+cd note-app-base
 ```
 
 ### 3. Install Dependencies
