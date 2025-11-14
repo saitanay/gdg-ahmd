@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Specific paths
+note-app-base/node_modules
+
 # Build output
 dist/
 dist-ssr/
