@@ -4,11 +4,34 @@ This workshop will guide you through adding AI-powered features to a note-taking
 
 ## Prerequisites
 
+### Software Requirements
 - Basic knowledge of React and JavaScript
 - Chrome browser (version 131+ recommended)
 - Node.js and npm installed
 - A code editor
-- Experimental flags enabled on your browser + good hardware on laptop (Check [https://browser-check.x2u.in/](https://browser-check.x2u.in/) to verify your browser is ready)
+- Experimental flags enabled on your browser (Check [https://browser-check.x2u.in/](https://browser-check.x2u.in/) to verify your browser is ready)
+
+### Operating System
+- **Windows:** Windows 10 or 11
+- **macOS:** macOS 13+ (Ventura and onwards)
+- **Linux:** Supported
+- **ChromeOS:** Platform 16389.0.0 and onwards on Chromebook Plus devices
+- **Note:** Chrome for Android, iOS, and ChromeOS on non-Chromebook Plus devices are not yet supported by the APIs which use Gemini Nano
+
+### Hardware Requirements
+
+**Storage:**
+- At least 22 GB of free space on the volume that contains your Chrome profile
+- Built-in models should be significantly smaller. The exact size may vary slightly with updates.
+
+**GPU or CPU:**
+Built-in models can run with GPU or CPU.
+
+- **GPU:** Strictly more than 4 GB of VRAM
+- **CPU:** 16 GB of RAM or more and 4 CPU cores or more
+
+**Network:**
+- Unlimited data or an unmetered connection (required for initial model download)
 
 ## Setup Instructions
 
@@ -71,30 +94,17 @@ Copy and paste this complete code:
 ```javascript
 // Checks if all required AI APIs are available
 export function isAIAvailable() {
-  return typeof window !== 'undefined' && ('Summarizer' in window && 'Proofreader' in window && 'Rewriter' in window && 'LanguageModel' in window && 'Writer' in window);
+  return typeof window !== 'undefined' && 
+    ('Summarizer' in window && 
+     'Proofreader' in window && 
+     'Rewriter' in window && 
+     'LanguageModel' in window && 
+     'Writer' in window);
 }
 
 // Wrapper for the Writer API
 export async function generateBody(title) {
-  if (!('Writer' in window)) throw new Error('Writer API not supported.');
-  
-  const options = {
-    format: 'plain-text',
-  };
-  
-  const availability = await window.Writer.availability();
-  if (availability === 'unavailable') throw new Error('Writer not available.');
-  
-  let writer;
-  if (availability === 'available') {
-    writer = await window.Writer.create(options);
-  } else if (availability === 'downloadable') {
-    if (!navigator.userActivation.isActive) {
-      throw new Error('User activation required to download model.');
-    }
-    writer = await window.Writer.create(options);
-  }
-  
+  const writer = await window.Writer.create({ format: 'plain-text' });
   const prompt = `Write a short note about: ${title}. Give plain-text only. Don't use markdown.`;
   const result = await writer.write(prompt);
   writer.destroy();
@@ -202,14 +212,6 @@ export default AIWarning;
 ```javascript
 // Wrapper for the Summarizer API
 export async function summarize(text) {
-  if (!('Summarizer' in window)) throw new Error('Summarizer API not supported.');
-  
-  const availability = await window.Summarizer.availability();
-  if (availability === 'unavailable') throw new Error('Summarizer not available.');
-  if (availability === 'downloadable' && !navigator.userActivation.isActive) {
-    throw new Error('User activation required to download model.');
-  }
-  
   const summarizer = await window.Summarizer.create();
   return await summarizer.summarize(text);
 }
@@ -278,14 +280,6 @@ async function handleSummarize() {
 
 ```javascript
 export async function proofread(text) {
-  if (!('Proofreader' in window)) throw new Error('Proofreader API not supported.');
-  
-  const availability = await window.Proofreader.availability();
-  if (availability === 'unavailable') throw new Error('Proofreader not available.');
-  if (availability === 'downloadable' && !navigator.userActivation.isActive) {
-    throw new Error('User activation required to download model.');
-  }
-  
   const proofreader = await window.Proofreader.create();
   const result = await proofreader.proofread(text);
   let correctedText = result.correctedInput;
@@ -297,27 +291,11 @@ export async function proofread(text) {
 }
 
 export async function rewrite(text) {
-  if (!('Rewriter' in window)) throw new Error('Rewriter API not supported.');
-  
-  const availability = await window.Rewriter.availability();
-  if (availability === 'unavailable') throw new Error('Rewriter not available.');
-  if (availability === 'downloadable' && !navigator.userActivation.isActive) {
-    throw new Error('User activation required to download model.');
-  }
-  
   const rewriter = await window.Rewriter.create();
-  return await rewriter.rewrite(text, {}); // Passing empty options for default rewrite
+  return await rewriter.rewrite(text, {});
 }
 
 export async function generateTitle(text) {
-  if (!('LanguageModel' in window)) throw new Error('LanguageModel API not supported.');
-  
-  const availability = await window.LanguageModel.availability();
-  if (availability === 'unavailable') throw new Error('LanguageModel not available.');
-  if (availability === 'downloadable' && !navigator.userActivation.isActive) {
-    throw new Error('User activation required to download model.');
-  }
-  
   const session = await window.LanguageModel.create();
   const prompt = `Generate a concise title (maximum 5-7 words) for the following note content. Return only the title, nothing else:\n\n${text}`;
   const result = await session.prompt(prompt);
@@ -388,55 +366,16 @@ async function handleAI(action) {
   setLoading(true);
   try {
     const aiActions = {
-      generateTitle: async () => {
-        if (!currentNote.content) {
-          alert('Please provide content for this action.');
-          return null;
-        }
-        const result = await generateTitle(currentNote.content);
-        return result ? { title: result } : null;
-      },
-      generateBody: async () => {
-        if (!currentNote.title) {
-          alert('Please provide a title to generate content.');
-          return null;
-        }
-        const result = await generateBody(currentNote.title);
-        return result ? { content: result } : null;
-      },
-      summarize: async () => {
-        if (!currentNote.content) {
-          alert('Please provide content for this action.');
-          return null;
-        }
-        const result = await summarize(currentNote.content);
-        return result ? { content: result } : null;
-      },
-      proofread: async () => {
-        if (!currentNote.content) {
-          alert('Please provide content for this action.');
-          return null;
-        }
-        const result = await proofread(currentNote.content);
-        return result ? { content: result } : null;
-      },
-      rewrite: async () => {
-        if (!currentNote.content) {
-          alert('Please provide content for this action.');
-          return null;
-        }
-        const result = await rewrite(currentNote.content);
-        return result ? { content: result } : null;
-      },
+      generateTitle: () => generateTitle(currentNote.content).then(result => ({ title: result })),
+      generateBody: () => generateBody(currentNote.title).then(result => ({ content: result })),
+      summarize: () => summarize(currentNote.content).then(result => ({ content: result })),
+      proofread: () => proofread(currentNote.content).then(result => ({ content: result })),
+      rewrite: () => rewrite(currentNote.content).then(result => ({ content: result })),
     };
 
     const update = await aiActions[action]();
     if (update) {
       setCurrentNote({ ...currentNote, ...update });
-    } else if (update === null) {
-      // User was alerted, just return
-    } else {
-      alert('No result returned from AI');
     }
   } catch (error) {
     console.error('AI error:', error);
