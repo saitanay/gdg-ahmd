@@ -120,11 +120,10 @@ export async function generateBody(title) {
 
 **OPEN the existing file: `src/App.jsx`**
 
-**Step 2.1: INSERT these imports at the top of the file (after existing imports):**
+**Step 2.1: INSERT this import at the top of the file (after existing imports):**
 
 ```javascript
 import { isAIAvailable, generateBody } from './lib/ai';
-import AIWarning from './components/AIWarning'; // We will create this next
 ```
 
 **Step 2.2: INSERT these state variables inside the App function (after existing state):**
@@ -172,7 +171,6 @@ async function handleGenerateBody() {
     </button>
   )}
 </div>
-{!aiAvailable && <AIWarning />}
 ```
 
 ---
@@ -181,7 +179,7 @@ async function handleGenerateBody() {
 
 **See Slide 21**
 
-**CREATE a new file: `src/components/AIWarning.jsx`**
+**Step 3.1: CREATE a new file: `src/components/AIWarning.jsx`**
 
 Copy and paste this complete code:
 
@@ -197,6 +195,28 @@ function AIWarning() {
   );
 }
 export default AIWarning;
+```
+
+**Step 3.2: OPEN `src/App.jsx` and ADD this import (after the existing imports):**
+
+```javascript
+import AIWarning from './components/AIWarning';
+```
+
+**Step 3.3: UPDATE the action-bar section to include the warning (REPLACE the action-bar div from Step 2.5):**
+
+```javascript
+<div className="action-bar">
+  <button className="button button-primary" onClick={handleSave}>
+    Save
+  </button>
+  {aiAvailable && (
+    <button className="button" onClick={handleGenerateBody} disabled={loading || !currentNote.title}>
+      {loading ? 'Writing...' : 'Write For Me'}
+    </button>
+  )}
+</div>
+{!aiAvailable && <AIWarning />}
 ```
 
 ---
@@ -247,7 +267,7 @@ async function handleSummarize() {
 }
 ```
 
-**Step 5.3: REPLACE the action-bar div with this updated version:**
+**Step 5.3: REPLACE the action-bar div with this updated version (keep the AIWarning line from Step 3.3):**
 
 ```javascript
 <div className="action-bar">
@@ -316,7 +336,9 @@ Copy and paste this complete code:
 
 ```javascript
 function AIActions({ aiAvailable, loading, hasContent, hasTitle, onAIAction }) {
-  if (!aiAvailable) return null;
+  if (!aiAvailable) {
+    return null;
+  }
 
   const buttons = [
     { action: 'generateTitle', label: 'Generate Title', requiresContent: true },
@@ -352,11 +374,16 @@ export default AIActions;
 
 **OPEN the existing file: `src/App.jsx`**
 
-**Step 8.1: REPLACE the import line with this updated version:**
+**Step 8.1: UPDATE the imports - REPLACE the AI import line and ADD the AIActions import (keep all other existing imports like useState, useEffect, getNotes, saveNote, deleteNote, NoteList, NoteEditor, and AIWarning):**
 
 ```javascript
+import { useState, useEffect } from 'react';
+import { getNotes, saveNote, deleteNote } from './lib/db';
 import { isAIAvailable, summarize, proofread, rewrite, generateTitle, generateBody } from './lib/ai';
+import NoteList from './components/NoteList';
+import NoteEditor from './components/NoteEditor';
 import AIActions from './components/AIActions';
+import AIWarning from './components/AIWarning';
 ```
 
 **Step 8.2: REPLACE the `handleGenerateBody` and `handleSummarize` functions with this complete `handleAI` function:**
