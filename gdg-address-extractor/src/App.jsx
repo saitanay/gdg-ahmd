@@ -112,6 +112,14 @@ function App() {
     setLoading(false);
   }
 
+  function handleFieldChange(customerId, field, value) {
+    setCustomers(prev => prev.map(c => 
+      c.id === customerId 
+        ? { ...c, [field]: value }
+        : c
+    ));
+  }
+
   return (
     <div className="app">
       <div className="container">
@@ -166,9 +174,33 @@ function App() {
                   <td>{customer.firstName}</td>
                   <td>{customer.lastName}</td>
                   <td className="address-cell">{customer.address}</td>
-                  <td className={customer.city ? 'extracted' : ''}>{customer.city || '-'}</td>
-                  <td className={customer.state ? 'extracted' : ''}>{customer.state || '-'}</td>
-                  <td className={customer.pinCode ? 'extracted' : ''}>{customer.pinCode || '-'}</td>
+                  <td>
+                    <input
+                      type="text"
+                      value={customer.city || ''}
+                      onChange={(e) => handleFieldChange(customer.id, 'city', e.target.value)}
+                      className={`editable-field ${customer.city ? 'extracted' : ''}`}
+                      placeholder="City"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={customer.state || ''}
+                      onChange={(e) => handleFieldChange(customer.id, 'state', e.target.value)}
+                      className={`editable-field ${customer.state ? 'extracted' : ''}`}
+                      placeholder="State"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={customer.pinCode || ''}
+                      onChange={(e) => handleFieldChange(customer.id, 'pinCode', e.target.value)}
+                      className={`editable-field ${customer.pinCode ? 'extracted' : ''}`}
+                      placeholder="Pin Code"
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>

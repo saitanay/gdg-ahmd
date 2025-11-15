@@ -512,7 +512,8 @@ An extended version of this app (`note-app-ai-extended`) is available that inclu
 ## Resources
 
 - [Chrome AI APIs Documentation](https://developer.chrome.com/docs/ai)
-- [Chrome Flags](chrome://flags)
+- [Prompt API Documentation](https://developer.chrome.com/docs/ai/prompt-api)
+- [Browser Check Tool](https://browser-check.x2u.in/)
 - [React Documentation](https://react.dev)
 
 ---
