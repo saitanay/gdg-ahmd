@@ -3,4 +3,6 @@ node_modules/
 
 # Specific paths
 note-app-base/node_modules
+gdg-social-generator/node_modules
+gdg-address-extractor/node_modules
 
